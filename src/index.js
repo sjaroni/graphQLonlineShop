@@ -1,24 +1,39 @@
 const { ApolloServer, gql } = require('apollo-server');
 
-// TODO fill with value
-// const schema = null;
 const schema = gql`
   type Query {
-    product: Product
+    products(search: String): [Product!]
   }
   type Product {
     name: String!
-  }`;
-  
-// TODO fill with value
-const resolvers = null;
+  }
+`;
+
+let productdata = [
+  {
+    name: 'Kartoffel',
+  },
+  {
+    name: 'Pasta',
+  },
+];
+
+const resolvers = {
+  Query: {
+    products: (parent, { search }) => {
+      if (search) {
+        return productdata.filter((p) => p.name.includes(search));
+      }
+      return productdata;
+    },
+  },
+};
 
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
 });
 
-// The `listen` method launches a web server.
 server.listen().then(({ url }) => {
   console.log(`Server ready at ${url}`);
 });
